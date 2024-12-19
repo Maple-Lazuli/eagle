@@ -3,20 +3,6 @@ import json
 
 app = Flask(__name__)
 
-def log_decryption(encrypted_log: bytes) -> dict:
-    """
-    Decryps the log
-    :param encrypted_log:
-    :return:
-    """
-
-def log_verification(log: dict) -> bool:
-    """
-    This function
-    :param log: expects a log dictionary
-    :return: boolean indicating the log is correctly structured.
-    """
-
 
 @app.route('/pubic_key', methods=['GET'])
 def get_public_exponent():
@@ -34,7 +20,6 @@ def accept_log():
             "message": "Data received successfully",
             "received_data": data
         }
-
 
         return Response(json.dumps(response), status=200, mimetype='application/json')
     else:
