@@ -10,6 +10,7 @@ dependencies = [
     "mkdocs>=1.6.1",
     "networkx>=3.4.2",
     "plotly>=5.24.1",
+    "pycryptodome>=3.21.0",
     "pysonar-scanner>=0.2.0.520",
     "ruff>=0.8.4",
     "streamlit>=1.41.1",
