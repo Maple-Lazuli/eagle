@@ -20,7 +20,12 @@ def log_verification(log: dict) -> bool:
     :param log: expects a log dictionary
     :return: boolean indicating the log is correctly structured.
     """
-    pass
+    valid = True
+    for key in log.keys():
+        if key not in cnst.client_log_template.keys():
+            valid = False
+    return valid
+
 
 
 def log_storage(log: dict):
