@@ -1,3 +1,10 @@
+import constants as cnst
+import pickle
+from datetime import datetime
+from hashlib import sha256
+import struct
+import os
+
 def log_decryption(encrypted_log: bytes) -> dict:
     """
     Decryps the log file and returs it as a dictonary.
@@ -16,10 +23,16 @@ def log_verification(log: dict) -> bool:
     pass
 
 
-def log_storage(log: dict) -> bool:
+def log_storage(log: dict):
     """
     This function writes the log event to the log storage directory.
     :param log:
     :return:
     """
-    pass
+    timestamp = datetime.now().timestamp()
+    time_bytes = struct.pack('f',timestamp)
+    digest = sha256(time_bytes).hexdigest()
+    log_file_name = f'{digest}.pkl'
+    file_path = os.path.join(cnst.log_storage_directory,log_file_name)
+    with open(file_path, "wb") as file_out:
+        pickle.dump(log, file_out)
