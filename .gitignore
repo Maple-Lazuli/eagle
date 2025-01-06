@@ -12,3 +12,5 @@ wheels/
 *idea*
 .idea
 *data*
+
+*__pycache__*

@@ -26,11 +26,12 @@ def accept_log():
     if not request.is_json:
         return Response("Invalid Request", status=400, mimetype='application/json')
 
-    data = request.get_json()
+    data = json.loads(request.json)
+
     first_name = data['first_name']
     last_name = data['last_name']
     num = len([_ for _ in employees.keys()]) + 1
-
+    print(organization)
     employee, organization = u.register_employee(first_name, last_name,num, organization)
 
     employees[num] = employee

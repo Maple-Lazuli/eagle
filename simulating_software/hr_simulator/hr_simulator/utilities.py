@@ -39,5 +39,5 @@ def save_dictionary(path, d):
 
 
 def load_dictionary(path):
-    with open(path, "w") as file_out:
-        json.load(file_out)
+    with open(path, "r") as file_out:
+        return json.load(file_out)
