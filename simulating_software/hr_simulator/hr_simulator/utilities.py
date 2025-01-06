@@ -14,8 +14,8 @@ def register_employee(first_name, last_name, number, organization):
         "First_Name": first_name,
         "Last_Name": last_name,
         "Employee_Num": number,
-        "department": department,
-        "team": team
+        "Department": department,
+        "Team": team
     }
 
     organization[department][team]["Members"].append(number)
@@ -33,11 +33,11 @@ def initialize_organization():
         return json.load(file_in)
 
 
-def save_organization(path, organization):
-    with open(os.path.join(path, "organization.json"), "w") as file_out:
-        json.dump(file_out, organization)
+def save_dictionary(path, d):
+    with open(path, "w") as file_out:
+        json.dump(file_out, d)
 
 
-def save_employees(path, employees):
-    with open(os.path.join(path, "employees.json"), "w") as file_out:
-        json.dump(file_out, employees)
+def load_dictionary(path):
+    with open(path, "w") as file_out:
+        json.load(file_out)
