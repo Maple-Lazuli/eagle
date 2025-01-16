@@ -33,11 +33,13 @@ def initialize_organization():
         return json.load(file_in)
 
 
-def save_dictionary(path, d):
+def save_dictionary(directory, file_name, d):
+    path = os.path.join(directory, file_name)
     with open(path, "w") as file_out:
         json.dump(file_out, d)
 
 
-def load_dictionary(path):
+def load_dictionary(directory, file_name):
+    path = os.path.join(directory, file_name)
     with open(path, "r") as file_out:
         return json.load(file_out)

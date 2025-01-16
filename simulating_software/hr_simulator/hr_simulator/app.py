@@ -6,11 +6,11 @@ import os
 app = Flask(__name__)
 
 if os.path.exists(".data"):
-    organization = u.load_dictionary(".data/organization.json")
-    employees = u.load_dictionary(".data/employees.json")
+    organization = u.load_dictionary(".data", "organization.json")
+    employees = u.load_dictionary(".data", "employees.json")
 else:
     os.mkdir(".data")
-    organization = u.load_dictionary("organization.json")
+    organization = u.load_dictionary("organization_template.json")
     employees = dict()
 
 
@@ -20,7 +20,7 @@ def get_users():
 
 
 @app.route('/register', methods=['POST'])
-def accept_log():
+def register_employee():
     global organization
     global employees
     if not request.is_json:
@@ -31,12 +31,16 @@ def accept_log():
     first_name = data['first_name']
     last_name = data['last_name']
     num = len([_ for _ in employees.keys()]) + 1
-    print(organization)
-    employee, organization = u.register_employee(first_name, last_name,num, organization)
+
+    employee, organization = u.register_employee(first_name, last_name, num, organization)
 
     employees[num] = employee
 
     team = organization[employee['Department']][employee['Team']]
+
+    u.save_dictionary(".data", "organization.json", organization)
+    u.save_dictionary(".data", "employees.json", employees)
+
     return Response(json.dumps([employee, team]), status=200, mimetype='application/json')
 
 
