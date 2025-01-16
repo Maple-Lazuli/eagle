@@ -20,7 +20,7 @@ def create_user_account(first_name, last_name, accounts_names):
 def save_dictionary(directory, file_name, d):
     path = os.path.join(directory, file_name)
     with open(path, "w") as file_out:
-        json.dump(file_out, d)
+        json.dump(d, file_out)
 
 
 def load_dictionary(directory, file_name):
