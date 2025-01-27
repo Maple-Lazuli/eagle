@@ -10,7 +10,7 @@ if os.path.exists(".data"):
     employees = u.load_dictionary(".data", "employees.json")
 else:
     os.mkdir(".data")
-    organization = u.load_dictionary("organization_template.json")
+    organization = u.load_dictionary("./", "organization_template.json")
     employees = dict()
 
 
