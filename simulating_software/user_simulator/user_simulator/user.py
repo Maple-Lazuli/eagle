@@ -1,6 +1,8 @@
 import json
 import requests as r
 import utilities as u
+import random
+import time
 
 
 def set_up():
@@ -43,3 +45,41 @@ def set_up():
             "account_name": account_name,
             "work_ssps": work_ssps,
             }
+
+
+def send_request(account, target):
+    """
+    Send a request to access organizational resources
+    :param account:
+    :param target:
+    :return:
+    """
+    r.post("http://127.0.0.1:4590/event", json=json.dumps({'account': account, 'target': target}))
+
+
+def get_department_ssps(department):
+    """
+    Send a request discover ssps utilized by the department
+    :param department:
+    :return:
+    """
+    res = r.get(f"http://127.0.0.1:4520/department_ssps?department={department}")
+    return res.json()
+
+
+def main():
+    user_dict = set_up()
+
+    for i in range(20):
+        # continue if outside operating hours
+
+        # This is just a random way to toggle team ssps or dept ssps
+        if random.randint(0, 5) != 3:
+            send_request(user_dict['account_name'], random.choice(user_dict['work_ssps']))
+        else:
+            dept_ssp = random.choice(get_department_ssps(user_dict['department']))
+            send_request(user_dict['account_name'], dept_ssp)
+
+
+if __name__ == "__main__":
+    main()
