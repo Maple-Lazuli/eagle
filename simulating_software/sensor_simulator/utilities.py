@@ -21,3 +21,12 @@ def save_dictionary(directory, data):
 
     with open(os.path.join(directory, file_name), "w") as file_out:
         json.dump(data, file_out)
+
+
+def aggregate_logs(directory):
+    logs = []
+    files = os.listdir(directory)
+    for file in files:
+        with open(os.path.join(directory, file)) as file_in:
+            logs.append(json.load(file_in))
+    return logs
