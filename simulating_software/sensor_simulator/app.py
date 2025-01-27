@@ -13,7 +13,7 @@ if not os.path.exists(".data"):
 def get_logs():
     logs = u.aggregate_logs(".data")
 
-    return Response(json.dumps(logs), status=00, mimetype='application/json')
+    return Response(json.dumps(logs), status=200, mimetype='application/json')
 
 
 @app.route('/event', methods=['POST'])
