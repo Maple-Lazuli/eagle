@@ -1,12 +1,28 @@
 from flask import Flask, request, Response
 import json
 import utilities as u
+import datetime
 import os
 
 app = Flask(__name__)
 
 if not os.path.exists(".data"):
     os.mkdir(".data")
+
+time_scale = 1.00000001
+time_scale = 1.0000001
+time_scale = 1.000001
+current = datetime.datetime.now()
+scaled = current.timestamp() * time_scale
+
+
+@app.route('/time', methds=['GET'])
+def get_time():
+    global current
+    global scaled
+    current = datetime.datetime.now() - current
+    scaled = current.timestamp() * time_scale
+    return Response(json.dumps({'timestamp': scaled}), status=200, mimetype='application/json')
 
 
 @app.route('/logs', methods=['GET'])
