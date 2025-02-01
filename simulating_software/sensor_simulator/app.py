@@ -9,19 +9,22 @@ app = Flask(__name__)
 if not os.path.exists(".data"):
     os.mkdir(".data")
 
-time_scale = 1.00000001
+# time_scale = 1.00000001
+# time_scale = 1.0000001
 time_scale = 1.0000001
-time_scale = 1.000001
 current = datetime.datetime.now()
-scaled = current.timestamp() * time_scale
+scaled_base = current.timestamp() * time_scale
 
 
-@app.route('/time', methds=['GET'])
+@app.route('/time', methods=['GET'])
 def get_time():
     global current
-    global scaled
-    current = datetime.datetime.now() - current
-    scaled = current.timestamp() * time_scale
+    global scaled_base
+    seconds = (datetime.datetime.now() - current).seconds
+    scaled = scaled_base
+    for i in range(seconds):
+        scaled *= time_scale
+
     return Response(json.dumps({'timestamp': scaled}), status=200, mimetype='application/json')
 
 
