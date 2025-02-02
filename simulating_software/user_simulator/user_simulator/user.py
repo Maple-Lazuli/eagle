@@ -105,6 +105,7 @@ def multi_thread_users(num_users):
     threads = []
 
     for _ in range(num_users):
+        time.sleep(random.randint(1, 5))
         thread = threading.Thread(target=main)
         thread.start()
         threads.append(thread)
@@ -114,5 +115,5 @@ def multi_thread_users(num_users):
 
 
 if __name__ == "__main__":
-    #main()
+    # main()
     multi_thread_users(10)
