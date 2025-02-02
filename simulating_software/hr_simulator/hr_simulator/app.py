@@ -10,13 +10,18 @@ if os.path.exists(".data"):
     employees = u.load_dictionary(".data", "employees.json")
 else:
     os.mkdir(".data")
-    organization = u.load_dictionary("./", "organization_template.json")
+    organization = u.load_dictionary("./hr_simulator", "organization_template.json")
     employees = dict()
 
 
 @app.route('/users', methods=['GET'])
 def get_users():
     return Response(json.dumps(employees), status=200, mimetype='application/json')
+
+
+@app.route('/organization', methods=['GET'])
+def get_organization():
+    return Response(json.dumps(organization), status=200, mimetype='application/json')
 
 
 @app.route('/register', methods=['POST'])
@@ -45,4 +50,4 @@ def register_employee():
 
 
 if __name__ == '__main__':
-    app.run(port=4510)
+    app.run(host="0.0.0.0", port=4510)

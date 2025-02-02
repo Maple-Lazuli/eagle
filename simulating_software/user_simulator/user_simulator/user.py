@@ -50,7 +50,8 @@ def set_up():
             "start_hour": start_hour,
             "work_days": work_days,
             "account_name": account_name,
-            "work_ssps": work_ssps
+            "work_ssps": work_ssps,
+            "insider": insider_status
             }
 
 
@@ -61,6 +62,8 @@ def main():
         time.sleep(random.randint(3, 10))
         current_time = u.get_current_sim_time()
         normal_hours = u.within_operating_hours(current_time, user_dict['start_hour'], user_dict['work_days'])
+        if not normal_hours:
+            time.sleep(random.randint(20, 60))
 
         if user_dict['insider']:
 

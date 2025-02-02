@@ -13,6 +13,11 @@ else:
     ssp_mapping = dict()
 
 
+@app.route('/ssps', methods=['GET'])
+def get_ssps_mapping():
+    return Response(json.dumps(ssp_mapping), status=200, mimetype='application/json')
+
+
 @app.route('/department_ssps', methods=['GET'])
 def get_department_ssps():
     department = request.args.get('department')
@@ -64,4 +69,4 @@ def register_ssp_use():
 
 
 if __name__ == '__main__':
-    app.run(port=4520)
+    app.run(host="0.0.0.0", port=4520)

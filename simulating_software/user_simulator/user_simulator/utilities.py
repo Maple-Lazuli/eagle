@@ -5,19 +5,19 @@ import requests as r
 
 
 def get_random_first_name():
-    with open("./refs/first_names.json", "r") as file_in:
+    with open("./user_simulator/refs/first_names.json", "r") as file_in:
         return random.choice(json.load(file_in))
 
 
 def get_random_last_name():
-    with open("./refs/last_names.json", "r") as file_in:
+    with open("./user_simulator/refs/last_names.json", "r") as file_in:
         return random.choice(json.load(file_in))
 
 
 def within_operating_hours(current_time, start_hour, work_days):
     current_day = current_time.weekday()
 
-    if not ((current_day in work_days) or ((current_time - 1) % 7 in work_days)):
+    if not ((current_day in work_days) or ((current_day - 1) % 7 in work_days)):
         return False
 
     start_time = datetime.datetime.strptime(f'{current_time.day}-{current_time.month}-{current_time.year}',

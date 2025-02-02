@@ -4,7 +4,7 @@ import os
 
 
 def get_ssps():
-    ssps = load_dictionary(".", "ssp_names.json")
+    ssps = load_dictionary("./ssp_simulator", "ssp_names.json")
     num_ssps = random.randint(3, 50)
     chosen_ssps = set()
     for _ in range(num_ssps):
