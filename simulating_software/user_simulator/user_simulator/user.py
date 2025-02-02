@@ -1,8 +1,10 @@
 import json
-import requests as r
+
 import utilities as u
 import random
 import time
+import datetime
+import requests as r
 
 
 def set_up():
@@ -30,9 +32,14 @@ def set_up():
     if position_lead:
         res = r.post("http://127.0.0.1:4520/register", json=json.dumps({"department": department, "team": team}))
     else:
-        res = r.get(f"http://127.0.0.1:4520/ssps?team={team}&department={department}")
+        res = r.get(f"http://127.0.0.1:4520/dept_team_ssps?team={team}&department={department}")
 
     work_ssps = res.json()
+
+    insider_status = random.randint(0, 1000) == 500
+
+    if insider_status:
+        u.register_insider(account_name)
 
     return {"first_name": first_name,
             "last_name": last_name,
@@ -43,43 +50,51 @@ def set_up():
             "start_hour": start_hour,
             "work_days": work_days,
             "account_name": account_name,
-            "work_ssps": work_ssps,
+            "work_ssps": work_ssps
             }
-
-
-def send_request(account, target, department):
-    """
-    Send a request to access organizational resources
-    :param account:
-    :param target:
-    :return:
-    """
-    r.post("http://127.0.0.1:4590/event",
-           json=json.dumps({'account': account, 'target': target, "department": department}))
-
-
-def get_department_ssps(department):
-    """
-    Send a request discover ssps utilized by the department
-    :param department:
-    :return:
-    """
-    res = r.get(f"http://127.0.0.1:4520/department_ssps?department={department}")
-    return res.json()
 
 
 def main():
     user_dict = set_up()
 
-    for i in range(20):
-        # continue if outside operating hours
+    while not u.kill_switch_active():
+        time.sleep(random.randint(3, 10))
+        current_time = u.get_current_sim_time()
+        normal_hours = u.within_operating_hours(current_time, user_dict['start_hour'], user_dict['work_days'])
 
-        # This is just a random way to toggle team ssps or dept ssps
-        if random.randint(0, 5) != 3:
-            send_request(user_dict['account_name'], random.choice(user_dict['work_ssps']))
+        if user_dict['insider']:
+
+            # decide whether to go in after hours
+            if not normal_hours:
+                if not random.randint(0, 20) == 3:
+                    continue
+            # decide whether random ssp or typical ssp
+            if random.randint(0, 30) == 5:
+                rand_ssp = random.choice(u.get_registered_ssps())
+                u.send_request(user_dict['account_name'], rand_ssp, user_dict['department'])
+            else:
+                # decide dept ssp or team ssp
+                if random.randint(0, 15) == 3:
+                    dept_ssp = random.choice(u.get_department_ssps(user_dict['department']))
+                    u.send_request(user_dict['account_name'], dept_ssp, user_dict['department'])
+
+                else:
+                    team_ssp = random.choice(user_dict['work_ssps'])
+                    u.send_request(user_dict['account_name'], team_ssp, user_dict['department'])
         else:
-            dept_ssp = random.choice(get_department_ssps(user_dict['department']))
-            send_request(user_dict['account_name'], dept_ssp)
+            # decide whether to go in after hours
+            if not normal_hours:
+                if not random.randint(0, 30) == 3:
+                    continue
+
+            # decide dept ssp or team ssp
+            if random.randint(0, 30) == 3:
+                dept_ssp = random.choice(u.get_department_ssps(user_dict['department']))
+                u.send_request(user_dict['account_name'], dept_ssp, user_dict['department'])
+
+            else:
+                team_ssp = random.choice(user_dict['work_ssps'])
+                u.send_request(user_dict['account_name'], team_ssp, user_dict['department'])
 
 
 if __name__ == "__main__":

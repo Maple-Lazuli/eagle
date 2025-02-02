@@ -25,7 +25,7 @@ def get_department_ssps():
     return Response(json.dumps(ssps), status=200, mimetype='application/json')
 
 
-@app.route('/ssps', methods=['GET'])
+@app.route('/dept_team_ssps', methods=['GET'])
 def get_ssp_mapping():
     team = request.args.get('team')
     department = request.args.get('department')
@@ -34,6 +34,14 @@ def get_ssp_mapping():
         return Response(json.dumps(ssp_mapping[f'{department}-{team}']), status=200, mimetype='application/json')
     else:
         return Response(json.dumps([]), status=400, mimetype='application/json')
+
+
+@app.route('/get_ssps', methods=['GET'])
+def get_ssps():
+    registered_ssps = []
+    for key in ssp_mapping.keys():
+        registered_ssps.extend(ssp_mapping[key])
+    return Response(json.dumps(registered_ssps), status=200, mimetype='application/json')
 
 
 @app.route('/register', methods=['POST'])

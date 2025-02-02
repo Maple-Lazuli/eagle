@@ -30,3 +30,10 @@ def aggregate_logs(directory):
         with open(os.path.join(directory, file)) as file_in:
             logs.append(json.load(file_in))
     return logs
+
+
+def lookup_ssp_by_department(ssp_mapping, target, department):
+    if department in ssp_mapping.keys():
+        if target in ssp_mapping[department]:
+            return True
+    return False
