@@ -47,14 +47,15 @@ def set_up():
             }
 
 
-def send_request(account, target):
+def send_request(account, target, department):
     """
     Send a request to access organizational resources
     :param account:
     :param target:
     :return:
     """
-    r.post("http://127.0.0.1:4590/event", json=json.dumps({'account': account, 'target': target}))
+    r.post("http://127.0.0.1:4590/event",
+           json=json.dumps({'account': account, 'target': target, "department": department}))
 
 
 def get_department_ssps(department):
