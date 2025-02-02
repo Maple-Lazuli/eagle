@@ -1,5 +1,5 @@
 import json
-
+import threading
 import utilities as u
 import random
 import time
@@ -83,6 +83,7 @@ def main():
 
                 else:
                     team_ssp = random.choice(user_dict['work_ssps'])
+                    team_ssp = random.choice(user_dict['work_ssps'])
                     u.send_request(user_dict['account_name'], team_ssp, user_dict['department'])
         else:
             # decide whether to go in after hours
@@ -100,5 +101,18 @@ def main():
                 u.send_request(user_dict['account_name'], team_ssp, user_dict['department'])
 
 
+def multi_thread_users(num_users):
+    threads = []
+
+    for _ in range(num_users):
+        thread = threading.Thread(target=main)
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
+
+
 if __name__ == "__main__":
-    main()
+    #main()
+    multi_thread_users(10)

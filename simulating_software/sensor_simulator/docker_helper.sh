@@ -1,2 +1,2 @@
-sudo docker build -t sensor .
-sudo docker run -p 4590:4590 --network host  sensor
+sudo docker build . -f Dockerfile -t lovelylazuli/sensor-simulator
+sudo docker push lovelylazuli/sensor-simulator

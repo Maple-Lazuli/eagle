@@ -1,2 +1,2 @@
-sudo docker build -t user .
-sudo docker run --network host  user
+sudo docker build . -f Dockerfile -t lovelylazuli/user-simulator
+sudo docker push lovelylazuli/user-simulator

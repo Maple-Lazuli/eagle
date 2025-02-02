@@ -1,2 +1,2 @@
-sudo docker build -t it .
-sudo docker run -p 4530:4530 --network host  it
+sudo docker build . -f Dockerfile -t lovelylazuli/it-manager-simulator
+sudo docker push lovelylazuli/it-manager-simulator

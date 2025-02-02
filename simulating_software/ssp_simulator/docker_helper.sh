@@ -1,2 +1,2 @@
-sudo docker build -t ssp .
-sudo docker run -p 4520:4520 --network host  ssp
+sudo docker build . -f Dockerfile -t lovelylazuli/ssp-manager-simulator
+sudo docker push lovelylazuli/ssp-manager-simulator

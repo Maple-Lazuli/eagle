@@ -14,12 +14,6 @@ if [[ -z "$n" || ! "$n" =~ ^[0-9]+$ ]]; then
   exit 1
 fi
 
-sudo docker run -d  -p 4520:4520 --network host lovelylazuli/sensor-simulator
-sudo docker run -d -p 4590:4590 --network host  lovelylazuli/ssp-manager-simulator
-sudo docker run -d -p 4510:4510 --network host  lovelylazuli/human-resources-simulator
-sudo docker run -d -p 4530:4530 --network host  lovelylazuli/it-manager-simulator
-sleep 5
-
 for ((i=1; i<=n; i++)); do
   sudo docker run -d  --network host  lovelylazuli/user-simulator
   # Sleep for 5 seconds every 20 iterations
