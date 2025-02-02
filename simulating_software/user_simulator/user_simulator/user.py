@@ -115,5 +115,5 @@ def multi_thread_users(num_users):
 
 
 if __name__ == "__main__":
-    # main()
-    multi_thread_users(10)
+    #main()
+    multi_thread_users(5)
