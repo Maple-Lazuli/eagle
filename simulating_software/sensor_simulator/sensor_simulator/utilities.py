@@ -69,7 +69,7 @@ def get_insiders():
 def get_logs():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, ssp_id, emp_id, authorized FROM logs")
+    cursor.execute("SELECT scaled_timestamp, ssp_id, emp_id, authorized FROM logs")
     logs = cursor.fetchall()
     cursor.close()
     conn.close()

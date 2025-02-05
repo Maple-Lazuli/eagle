@@ -18,10 +18,25 @@ def section_ssp_assignment():
     return Response(json.dumps(assigned_ssps), status=200, mimetype='application/json')
 
 
+@app.route('/get_division_ssps', methods=['GET'])
+def division_ssp_assignment():
+    division_id = request.args.get('division_id')
+
+    assigned_ssps = u.get_division_ssps(division_id)
+
+    return Response(json.dumps(assigned_ssps), status=200, mimetype='application/json')
+
+
 @app.route('/get_ssps', methods=['GET'])
 def get_ssps():
     ssps = u.get_ssp_list()
     return Response(json.dumps(ssps), status=200, mimetype='application/json')
+
+
+@app.route('/get_ssp_mapping', methods=['GET'])
+def get_ssps_mapping():
+    ssps_mapping = u.get_ssp_list()
+    return Response(json.dumps(ssps_mapping), status=200, mimetype='application/json')
 
 
 @app.route('/register', methods=['POST'])

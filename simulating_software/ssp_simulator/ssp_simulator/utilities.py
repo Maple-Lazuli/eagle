@@ -57,9 +57,17 @@ def add_ssps():
 def get_ssp_list():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-    SELECT * FROM ssps
-    """)
+    cursor.execute("SELECT * FROM ssps")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+
+def get_ssp_mapping():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM section_ssps")
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -86,6 +94,22 @@ def get_section_ssps(sect_id):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM section_ssps where sect_id = (%s)", (sect_id,))
     rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+
+def get_division_ssps(division_id):
+    rows = []
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM sections where division_id = (%s)", (division_id,))
+    common_sections = cursor.fetchall()
+
+    if len(common_sections) > 0:
+        section_ids = [i[0] for i in common_sections]
+        cursor.execute("SELECT * FROM section_ssps where  sect_id IN %s", (tuple(section_ids),))
+        rows = cursor.fetchall()
     cursor.close()
     conn.close()
     return rows

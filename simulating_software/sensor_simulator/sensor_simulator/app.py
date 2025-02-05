@@ -30,8 +30,8 @@ def get_scaled_timestamp():
 @app.route('/insider', methods=['POST'])
 def register_insider():
     """Registers an insider threat."""
-    data = request.get_json()
-    account = data.get('account')
+    data = json.loads(request.json)
+    account = data['account']
     u.register_insider(account)
     return Response("Okay", status=200, mimetype='application/json')
 

@@ -36,26 +36,25 @@ def get_current_sim_time():
     return datetime.datetime.fromtimestamp(float(res.json()['timestamp']))
 
 
-def send_request(account, target, department):
+def send_request(employee_num, target):
     """
     Send a request to access organizational resources
-    :param account:
+    :param employee_num:
     :param target:
-    :param department:
     :return:
     """
     r.post("http://127.0.0.1:4590/event",
-           json=json.dumps({'account': account, 'target': target, "department": department}))
+           json=json.dumps({'emp_id': employee_num, 'ssp_id': target}))
 
 
-def get_department_ssps(department):
+def get_division_ssps(division_id):
     """
     Send a request discover ssps utilized by the department
-    :param department:
+    :param division_id:
     :return:
     """
-    res = r.get(f"http://127.0.0.1:4520/department_ssps?department={department}")
-    return res.json()
+    res = r.get(f"http://127.0.0.1:4520/get_division_ssps?division_id={division_id}")
+    return [result[1] for result in res.json()] # filter for ssp_ids only
 
 
 def register_insider(account_name):
@@ -65,4 +64,4 @@ def register_insider(account_name):
 
 def get_registered_ssps():
     res = r.get(f"http://127.0.0.1:4520/get_ssps")
-    return res.json()
+    return [result[0] for result in res.json()] # filter for ssp_ids only

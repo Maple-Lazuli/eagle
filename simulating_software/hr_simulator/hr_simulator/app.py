@@ -13,6 +13,12 @@ def get_org():
     return Response(json.dumps(org), status=200, mimetype='application/json')
 
 
+@app.route('/get_employees', methods=['GET'])
+def get_employees():
+    org = u.get_employees()
+    return Response(json.dumps(org), status=200, mimetype='application/json')
+
+
 @app.route('/register', methods=['POST'])
 def register_employee():
     """Register a new employee and assign them to a team."""

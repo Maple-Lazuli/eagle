@@ -13,16 +13,16 @@ def set_up():
 
     res = r.post("http://127.0.0.1:4510/register", json=json.dumps({"first_name": first_name, "last_name": last_name}))
 
-    employee_record = res.json()[0]
-    team_record = res.json()[1]
+    employee_record = res.json()
 
-    employee_num = employee_record['Employee_Num']
-    department = employee_record['Department']
-    team = employee_record['Team']
+    employee_num = employee_record['Employee_id']
+    department_id = employee_record['Department_id']
+    division_id = employee_record['Division_id']
+    section_id = employee_record['Section_id']
 
-    position_lead = team_record['Lead'] == employee_num
-    start_hour = team_record['Start_Time']
-    work_days = team_record['Days']
+    position_lead = employee_record['Lead_id'] == employee_num
+    start_hour = employee_record['Start_Time']
+    work_days = employee_record['Days']
 
     res = r.post("http://127.0.0.1:4530/register",
                  json=json.dumps({"first_name": first_name, "last_name": last_name, 'employee_num': employee_num}))
@@ -30,11 +30,11 @@ def set_up():
     account_name = res.json()['account']
 
     if position_lead:
-        res = r.post("http://127.0.0.1:4520/register", json=json.dumps({"department": department, "team": team}))
+        res = r.post("http://127.0.0.1:4520/register", json=json.dumps({"section_id": section_id}))
     else:
-        res = r.get(f"http://127.0.0.1:4520/dept_team_ssps?team={team}&department={department}")
+        res = r.get(f"http://127.0.0.1:4520/get_section_ssps?section_id={section_id}")
 
-    work_ssps = res.json()
+    work_ssps = [result[1] for result in res.json()]
 
     insider_status = random.randint(0, 1000) == 500
 
@@ -44,8 +44,9 @@ def set_up():
     return {"first_name": first_name,
             "last_name": last_name,
             "employee_num": employee_num,
-            "department": department,
-            "team": team,
+            "department_id": department_id,
+            "section_id": section_id,
+            "division_id": division_id,
             "position_lead": position_lead,
             "start_hour": start_hour,
             "work_days": work_days,
@@ -57,7 +58,6 @@ def set_up():
 
 def main():
     user_dict = set_up()
-
     while not u.kill_switch_active():
         time.sleep(random.randint(3, 10))
         current_time = u.get_current_sim_time()
@@ -74,17 +74,16 @@ def main():
             # decide whether random ssp or typical ssp
             if random.randint(0, 30) == 5:
                 rand_ssp = random.choice(u.get_registered_ssps())
-                u.send_request(user_dict['account_name'], rand_ssp, user_dict['department'])
+                u.send_request(user_dict['employee_num'], rand_ssp)
             else:
                 # decide dept ssp or team ssp
                 if random.randint(0, 15) == 3:
-                    dept_ssp = random.choice(u.get_department_ssps(user_dict['department']))
-                    u.send_request(user_dict['account_name'], dept_ssp, user_dict['department'])
+                    div_ssp = random.choice(u.get_division_ssps(user_dict['division_id']))
+                    u.send_request(user_dict['employee_num'], div_ssp)
 
                 else:
-                    team_ssp = random.choice(user_dict['work_ssps'])
-                    team_ssp = random.choice(user_dict['work_ssps'])
-                    u.send_request(user_dict['account_name'], team_ssp, user_dict['department'])
+                    sect_ssp = random.choice(user_dict['work_ssps'])
+                    u.send_request(user_dict['employee_num'], sect_ssp)
         else:
             # decide whether to go in after hours
             if not normal_hours:
@@ -93,12 +92,12 @@ def main():
 
             # decide dept ssp or team ssp
             if random.randint(0, 30) == 3:
-                dept_ssp = random.choice(u.get_department_ssps(user_dict['department']))
-                u.send_request(user_dict['account_name'], dept_ssp, user_dict['department'])
+                dept_ssp = random.choice(u.get_division_ssps(user_dict['division_id']))
+                u.send_request(user_dict['employee_num'], dept_ssp)
 
             else:
-                team_ssp = random.choice(user_dict['work_ssps'])
-                u.send_request(user_dict['account_name'], team_ssp, user_dict['department'])
+                sect_ssp = random.choice(user_dict['work_ssps'])
+                u.send_request(user_dict['employee_num'], sect_ssp)
 
 
 def multi_thread_users(num_users):
@@ -116,4 +115,4 @@ def multi_thread_users(num_users):
 
 if __name__ == "__main__":
     #main()
-    multi_thread_users(5)
+    multi_thread_users(50)

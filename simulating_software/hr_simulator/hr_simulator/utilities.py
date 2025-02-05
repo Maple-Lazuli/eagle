@@ -162,3 +162,13 @@ def add_employee(first_name, last_name):
             'Lead_id': lead_id,
             'Start_Time': start_hour,
             'Days': work_days}
+
+
+def get_employees():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM employees")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
