@@ -1,25 +1,32 @@
 from flask import Flask, request, Response
 import json
-import os
+
 import utilities as u
 
 app = Flask(__name__)
 
-if os.path.exists(".data"):
-    accounts = u.load_dictionary(".data", "accounts.json")
-else:
-    os.mkdir(".data")
-    accounts = dict()
+# Initialize Database
+u.init_db()
 
 
 @app.route('/accounts', methods=['GET'])
 def get_accounts():
+    """Fetch all accounts from the database."""
+    conn = u.get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT account_name, employee_number FROM users")
+    accounts = {row[0]: row[1] for row in cursor.fetchall()}
+
+    cursor.close()
+    conn.close()
+
     return Response(json.dumps(accounts), status=200, mimetype='application/json')
 
 
 @app.route('/register', methods=['POST'])
 def register_account():
-    global accounts
+    """Register a new account and store it in the database."""
     if not request.is_json:
         return Response("Invalid Request", status=400, mimetype='application/json')
 
@@ -28,12 +35,7 @@ def register_account():
     first_name = data['first_name']
     last_name = data['last_name']
     employee_number = data['employee_num']
-
-    account_name = u.create_user_account(first_name, last_name, [k for k in accounts.keys()])
-
-    accounts[account_name] = employee_number
-
-    u.save_dictionary(".data", "accounts.json", accounts)
+    account_name = u.add_user_account(first_name, last_name, employee_number)
 
     return Response(json.dumps({'account': account_name}), status=200, mimetype='application/json')
 
