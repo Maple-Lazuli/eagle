@@ -6,6 +6,8 @@ COPY pyproject.toml /opt/app/
 
 WORKDIR /opt/app
 
+RUN apk update && apk add --no-cache gcc musl-dev libpq-dev
+
 RUN uv sync
 
 CMD [ "uv", "run", "hr_simulator/app.py"]
