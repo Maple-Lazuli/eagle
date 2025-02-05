@@ -15,9 +15,11 @@ DB_CONFIG = {
     "port": "5432",
 }
 
+
 # Establish DB Connection
 def get_db_connection():
     return psycopg2.connect(**DB_CONFIG)
+
 
 # Create Table if it Doesn't Exist
 def init_db():
@@ -35,6 +37,7 @@ def init_db():
     conn.commit()
     cursor.close()
     conn.close()
+
 
 # Initialize Database
 init_db()

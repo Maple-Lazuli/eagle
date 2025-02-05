@@ -13,7 +13,7 @@ if [[ -z "$n" || ! "$n" =~ ^[0-9]+$ ]]; then
   echo "Error: -n must be a positive integer."
   exit 1
 fi
-
+sudo docker run --name mydb -e POSTGRES_USER=user -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=mydb -p 5432:5432 -d postgres
 sudo docker run -d  -p 4520:4520 --network host lovelylazuli/sensor-simulator
 sudo docker run -d -p 4590:4590 --network host  lovelylazuli/ssp-manager-simulator
 sudo docker run -d -p 4510:4510 --network host  lovelylazuli/human-resources-simulator

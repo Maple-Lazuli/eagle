@@ -1,33 +1,21 @@
 from flask import Flask, request, Response
 import json
 import utilities as u
-import os
 
 app = Flask(__name__)
 
-if os.path.exists(".data"):
-    organization = u.load_dictionary(".data", "organization.json")
-    employees = u.load_dictionary(".data", "employees.json")
-else:
-    os.mkdir(".data")
-    organization = u.load_dictionary("./hr_simulator", "organization_template.json")
-    employees = dict()
+u.init_db()
 
 
-@app.route('/users', methods=['GET'])
-def get_users():
-    return Response(json.dumps(employees), status=200, mimetype='application/json')
-
-
-@app.route('/organization', methods=['GET'])
-def get_organization():
-    return Response(json.dumps(organization), status=200, mimetype='application/json')
+@app.route('/get_organization', methods=['GET'])
+def get_org():
+    org = u.get_org_structure()
+    return Response(json.dumps(org), status=200, mimetype='application/json')
 
 
 @app.route('/register', methods=['POST'])
 def register_employee():
-    global organization
-    global employees
+    """Register a new employee and assign them to a team."""
     if not request.is_json:
         return Response("Invalid Request", status=400, mimetype='application/json')
 
@@ -35,18 +23,11 @@ def register_employee():
 
     first_name = data['first_name']
     last_name = data['last_name']
-    num = len([_ for _ in employees.keys()]) + 1
 
-    employee, organization = u.register_employee(first_name, last_name, num, organization)
+    employee_dict = u.add_employee(first_name, last_name)
 
-    employees[num] = employee
-
-    team = organization[employee['Department']][employee['Team']]
-
-    u.save_dictionary(".data", "organization.json", organization)
-    u.save_dictionary(".data", "employees.json", employees)
-
-    return Response(json.dumps([employee, team]), status=200, mimetype='application/json')
+    return Response(json.dumps(employee_dict),
+                    status=200, mimetype='application/json')
 
 
 if __name__ == '__main__':
