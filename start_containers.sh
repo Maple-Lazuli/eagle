@@ -14,10 +14,14 @@ if [[ -z "$n" || ! "$n" =~ ^[0-9]+$ ]]; then
   exit 1
 fi
 sudo docker run --name mydb -e POSTGRES_USER=user -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=mydb -p 5432:5432 -d postgres
-sudo docker run -d  -p 4520:4520 --network host lovelylazuli/sensor-simulator
-sudo docker run -d -p 4590:4590 --network host  lovelylazuli/ssp-manager-simulator
+sleep 5
 sudo docker run -d -p 4510:4510 --network host  lovelylazuli/human-resources-simulator
+sleep 5
 sudo docker run -d -p 4530:4530 --network host  lovelylazuli/it-manager-simulator
+sleep 5
+sudo docker run -d -p 4590:4590 --network host  lovelylazuli/ssp-manager-simulator
+sleep 5
+sudo docker run -d  -p 4520:4520 --network host lovelylazuli/sensor-simulator
 sleep 5
 
 for ((i=1; i<=n; i++)); do
