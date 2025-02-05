@@ -1,52 +1,18 @@
 from flask import Flask, request, Response
 import json
-import psycopg2
-import os
-import utilities as u  # Assuming you still use `create_user_account`
+
+import utilities as u
 
 app = Flask(__name__)
 
-# Database Configuration
-DB_CONFIG = {
-    "dbname": "mydb",
-    "user": "user",
-    "password": "pass",
-    "host": "localhost",  # Change if using a remote server
-    "port": "5432",
-}
-
-
-# Establish DB Connection
-def get_db_connection():
-    return psycopg2.connect(**DB_CONFIG)
-
-
-# Create Table if it Doesn't Exist
-def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            account_name VARCHAR(100) UNIQUE NOT NULL,
-            first_name VARCHAR(100) NOT NULL,
-            last_name VARCHAR(100) NOT NULL,
-            employee_number VARCHAR(50) NOT NULL
-        )
-    """)
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-
 # Initialize Database
-init_db()
+u.init_db()
 
 
 @app.route('/accounts', methods=['GET'])
 def get_accounts():
     """Fetch all accounts from the database."""
-    conn = get_db_connection()
+    conn = u.get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute("SELECT account_name, employee_number FROM users")
@@ -64,30 +30,12 @@ def register_account():
     if not request.is_json:
         return Response("Invalid Request", status=400, mimetype='application/json')
 
-    data = request.get_json()
+    data = json.loads(request.json)
 
     first_name = data['first_name']
     last_name = data['last_name']
     employee_number = data['employee_num']
-
-    # Fetch existing account names
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT account_name FROM users")
-    existing_accounts = [row[0] for row in cursor.fetchall()]
-
-    # Generate a unique account name
-    account_name = u.create_user_account(first_name, last_name, existing_accounts)
-
-    # Insert new user into DB
-    cursor.execute(
-        "INSERT INTO users (account_name, first_name, last_name, employee_number) VALUES (%s, %s, %s, %s)",
-        (account_name, first_name, last_name, employee_number)
-    )
-    conn.commit()
-
-    cursor.close()
-    conn.close()
+    account_name = u.add_user_account(first_name, last_name, employee_number)
 
     return Response(json.dumps({'account': account_name}), status=200, mimetype='application/json')
 

@@ -6,97 +6,10 @@ import utilities as u  # Assuming utilities.py has get_ssps()
 
 app = Flask(__name__)
 
-# Database Configuration
-DB_CONFIG = {
-    "dbname": "mydb",
-    "user": "user",
-    "password": "pass",
-    "host": "localhost",  # Change for remote DB
-    "port": "5432",
-}
 
-# Establish DB Connection
-def get_db_connection():
-    return psycopg2.connect(**DB_CONFIG)
-
-# Create Tables if They Don't Exist
-def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS departments (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(100) UNIQUE NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS teams (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(100) NOT NULL,
-            department_id INT NOT NULL,
-            UNIQUE(name, department_id),
-            FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE
-        );
-
-        CREATE TABLE IF NOT EXISTS ssps (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(100) UNIQUE NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS team_ssps (
-            team_id INT NOT NULL,
-            ssp_id INT NOT NULL,
-            PRIMARY KEY (team_id, ssp_id),
-            FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
-            FOREIGN KEY (ssp_id) REFERENCES ssps(id) ON DELETE CASCADE
-        );
-    """)
-    conn.commit()
-    cursor.close()
-    conn.close()
 
 # Initialize Database
-init_db()
-
-
-@app.route('/departments', methods=['GET'])
-def get_departments():
-    """Fetch all departments."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id, name FROM departments")
-    departments = {row[0]: row[1] for row in cursor.fetchall()}
-
-    cursor.close()
-    conn.close()
-
-    return Response(json.dumps(departments), status=200, mimetype='application/json')
-
-
-@app.route('/teams', methods=['GET'])
-def get_teams():
-    """Fetch all teams, optionally filtered by department."""
-    department_name = request.args.get('department')
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    if department_name:
-        cursor.execute("""
-            SELECT teams.id, teams.name 
-            FROM teams 
-            JOIN departments ON teams.department_id = departments.id 
-            WHERE departments.name = %s
-        """, (department_name,))
-    else:
-        cursor.execute("SELECT id, name FROM teams")
-
-    teams = {row[0]: row[1] for row in cursor.fetchall()}
-
-    cursor.close()
-    conn.close()
-
-    return Response(json.dumps(teams), status=200, mimetype='application/json')
+u.init_db()
 
 
 @app.route('/ssps', methods=['GET'])
