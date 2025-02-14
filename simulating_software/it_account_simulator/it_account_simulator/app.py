@@ -35,7 +35,8 @@ def register_account():
     first_name = data['first_name']
     last_name = data['last_name']
     employee_number = data['employee_num']
-    account_name = u.add_user_account(first_name, last_name, employee_number)
+    key_id = data['key_id']
+    account_name = u.add_user_account(first_name, last_name, employee_number, key_id)
 
     return Response(json.dumps({'account': account_name}), status=200, mimetype='application/json')
 

@@ -44,9 +44,9 @@ def rsa_encrypt(message, public_key):
     return ciphertext.to_bytes((public_key['n'].bit_length() + 7) // 8, "big")
 
 
-def rsa_decrypt(message, public_key):
-    ciphertext = pow_mod(message, public_key['d'], public_key['n'])
-    return ciphertext.to_bytes((public_key['n'].bit_length() + 7) // 8, "big")
+def rsa_decrypt(message, private_key):
+    ciphertext = pow_mod(message, private_key['d'], private_key['n'])
+    return ciphertext.to_bytes((private_key['n'].bit_length() + 7) // 8, "big")
 
 
 def pow_mod(base, exp, mod):

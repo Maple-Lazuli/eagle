@@ -38,7 +38,7 @@ def register_key(public_key):
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO keys (public_key) VALUES (%s) RETURNING id",
-        (public_key,))
+        (psycopg2.Binary(public_key),))
     key_id = cursor.fetchone()[0]
     conn.commit()
     cursor.close()

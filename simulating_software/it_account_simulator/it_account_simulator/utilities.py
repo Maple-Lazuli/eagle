@@ -26,9 +26,10 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             account_name VARCHAR(100) UNIQUE NOT NULL,
-            first_name VARCHAR(100) NOT NULL,
-            last_name VARCHAR(100) NOT NULL,
-            employee_number VARCHAR(50) NOT NULL
+            employee_number int NOT NULL,
+            key_id int NOT NULL,
+            FOREIGN KEY (employee_number) REFERENCES employees(id) ON DELETE CASCADE,
+            FOREIGN KEY (key_id) REFERENCES keys(id) ON DELETE CASCADE
         )
     """)
     conn.commit()
@@ -50,7 +51,7 @@ def generate_user_name(first_name, last_name, accounts_names):
         return base_account_name_numeric
 
 
-def add_user_account(first_name, last_name, employee_number):
+def add_user_account(first_name, last_name, employee_number, key_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT account_name FROM users")
@@ -59,8 +60,8 @@ def add_user_account(first_name, last_name, employee_number):
     account_name = generate_user_name(first_name, last_name, existing_accounts)
 
     cursor.execute(
-        "INSERT INTO users (account_name, first_name, last_name, employee_number) VALUES (%s, %s, %s, %s)",
-        (account_name, first_name, last_name, employee_number))
+        "INSERT INTO users (account_name, employee_number, key_id) VALUES (%s, %s, %s)",
+        (account_name, employee_number, key_id))
 
     conn.commit()
     cursor.close()
