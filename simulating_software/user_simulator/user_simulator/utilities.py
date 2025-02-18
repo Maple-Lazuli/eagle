@@ -26,42 +26,43 @@ def within_operating_hours(current_time, start_hour, work_days):
     return 0 <= (current_time - start_time).seconds <= 60 * 60 * 8
 
 
-def kill_switch_active():
-    res = r.get(f"http://127.0.0.1:4590/kill_switch")
-    return res.json()['kill_active']
+def kill_switch_active(crypto):
+    res = crypto.get(f"http://127.0.0.1:4590/kill_switch")
+    return res['kill_active']
 
 
-def get_current_sim_time():
-    res = r.get(f"http://127.0.0.1:4590/time")
-    return datetime.datetime.fromtimestamp(float(res.json()['timestamp']))
+def get_current_sim_time(crypto):
+    res = crypto.get(f"http://127.0.0.1:4590/time")
+    return datetime.datetime.fromtimestamp(float(res['timestamp']))
 
 
-def send_request(employee_num, target):
+def send_request(employee_num, target, crypto):
     """
     Send a request to access organizational resources
     :param employee_num:
     :param target:
     :return:
     """
-    r.post("http://127.0.0.1:4590/event",
-           json=json.dumps({'emp_id': employee_num, 'ssp_id': target}))
+
+    sensor_key = r.get("http://127.0.0.1:4590/key_id").json()['key_id']
+    crypto.post("http://127.0.0.1:4590/event", {'emp_id': employee_num, 'ssp_id': target}, sensor_key)
 
 
-def get_division_ssps(division_id):
+def get_division_ssps(division_id, crypto):
     """
     Send a request discover ssps utilized by the department
     :param division_id:
     :return:
     """
-    res = r.get(f"http://127.0.0.1:4520/get_division_ssps?division_id={division_id}")
-    return [result[1] for result in res.json()] # filter for ssp_ids only
+    res = crypto.get(f"http://127.0.0.1:4520/get_division_ssps?division_id={division_id}")
+    return [result[1] for result in res]  # filter for ssp_ids only
 
 
-def register_insider(account_name):
-    r.post("http://127.0.0.1:4590/insider",
-           json=json.dumps({'account': account_name}))
+def register_insider(account_name, crypto):
+    sensor_key = r.get("http://127.0.0.1:4590/key_id").json()['key_id']
+    crypto.post("http://127.0.0.1:4590/insider", {'account': account_name}, sensor_key)
 
 
-def get_registered_ssps():
-    res = r.get(f"http://127.0.0.1:4520/get_ssps")
-    return [result[0] for result in res.json()] # filter for ssp_ids only
+def get_registered_ssps(crypto):
+    res = crypto.get(f"http://127.0.0.1:4520/get_ssps")
+    return [result[0] for result in res]  # filter for ssp_ids only
