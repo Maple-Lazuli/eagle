@@ -6,7 +6,7 @@ COPY pyproject.toml /opt/app/
 
 WORKDIR /opt/app
 
-RUN apk update && apk add --no-cache gcc musl-dev libpq-dev
+RUN apk update && apk add --no-cache gcc musl-dev libpq-dev openssl
 
 RUN uv sync
 
