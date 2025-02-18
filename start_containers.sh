@@ -15,6 +15,8 @@ if [[ -z "$n" || ! "$n" =~ ^[0-9]+$ ]]; then
 fi
 sudo docker run --name mydb -e POSTGRES_USER=user -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=mydb -p 5432:5432 -d postgres
 sleep 5
+sudo docker run -d -p 4580:4580 --network host  lovelylazuli/certificate-authority
+sleep 5
 sudo docker run -d -p 4510:4510 --network host  lovelylazuli/human-resources-simulator
 sleep 5
 sudo docker run -d -p 4530:4530 --network host  lovelylazuli/it-manager-simulator
