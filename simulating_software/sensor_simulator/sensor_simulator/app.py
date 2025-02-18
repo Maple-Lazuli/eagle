@@ -1,10 +1,8 @@
 from flask import Flask, request, Response
 import json
-import psycopg2
 import datetime
 import crypto_layer as cl
 import utilities as u
-import requests as r
 
 app = Flask(__name__)
 
