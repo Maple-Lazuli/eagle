@@ -13,7 +13,6 @@ crypto = cl.CryptoLayer()
 
 @app.route('/key_id', methods=['GET'])
 def get_key_id():
-    print("key:",  crypto.key_id)
     return Response(json.dumps({'key_id': crypto.key_id}), status=200, mimetype='application/json')
 
 

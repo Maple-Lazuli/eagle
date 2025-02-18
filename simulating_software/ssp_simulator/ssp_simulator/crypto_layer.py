@@ -17,7 +17,6 @@ def symmetric_encrypt(data, key, iv):
 
     padding_length = 16 - (len(data) % 16)
     padded_data = data + bytes([padding_length]) * padding_length
-
     encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
     return encrypted_data
 
@@ -42,11 +41,17 @@ class CryptoLayer:
     key_id = None
 
     def __init__(self, ca_address="127.0.0.1"):
-        os.system("openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048")
-        os.system("openssl rsa -in private_key.pem -pubout -out public_key.pem")
-        with open("private_key.pem", "rb") as private_key_file:
+
+        key_base_name = secrets.token_hex(32)
+        private_name = f"private-{key_base_name}.pem"
+        public_name = f"public-{key_base_name}.pem"
+
+        os.system(f"openssl genpkey -algorithm RSA -out {private_name} -pkeyopt rsa_keygen_bits:2048")
+        os.system(f"openssl rsa -in {private_name} -pubout -out {public_name}")
+
+        with open(private_name, "rb") as private_key_file:
             self.private_key = load_pem_private_key(private_key_file.read(), password=None)
-        with open("public_key.pem", "rb") as public_key_file:
+        with open(public_name, "rb") as public_key_file:
             self.public_key = load_pem_public_key(public_key_file.read())
 
         self.ca_address = ca_address
