@@ -107,5 +107,37 @@ def archive_event():
     return Response(crypto.create_payload({"Response": "Okay"}, sender_key), status=200, mimetype='application/json')
 
 
+@app.route('/testing', methods=['POST'])
+def testing():
+    """Logs an event and determines if access is authorized."""
+    data = json.loads(request.json)
+    sender_key = data["sender_key"]
+    data = crypto.decrypt_message(data)
+    too_big = """
+    1. The Key:
+Purpose: The key is the secret piece of data used to both encrypt and decrypt the data.
+How to Share: In symmetric encryption, both the sender and the receiver must have access to the same key. This is the sensitive piece of information that must be protected. If an attacker gets access to the key, they can decrypt the data.
+Sharing the Key: Typically, the key is shared out-of-band, meaning it is sent securely via some other means (e.g., using public-key cryptography, a secure key exchange protocol like Diffie-Hellman, or through secure channels like HTTPS). It's not sent alongside the encrypted message because anyone who intercepts the key can decrypt the data.
+2. The IV (Initialization Vector):
+Purpose: The IV is used to add randomness to the encryption process. It ensures that even if the same data is encrypted multiple times with the same key, the resulting ciphertext will be different each time.
+How to Share: The IV does not need to be kept secret like the key. It can be sent along with the encrypted data (typically as a prefix or in a specific format). Since it's used to make encryption more secure, it’s often a good practice to send it alongside the ciphertext, but it should be unique for every encryption operation to avoid patterns that could be exploited.
+Example: You can send the IV along with the ciphertext, such as in the form of a tuple (IV, ciphertext), or concatenate them together in the message.
+Example of Sharing Key and IV
+For secure communication, you could send the IV along with the encrypted data in this way:
+
+Encryption:
+
+Generate a random IV.
+Encrypt the data using the key and IV.
+Send both the IV and the encrypted data to the recipient.
+Decryption:
+
+The recipient receives the IV and the encrypted data.
+They use the same key and IV to decrypt the data.
+
+    """
+    return Response(crypto.create_payload({"Response": too_big}, sender_key), status=200, mimetype='application/json')
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=4590)

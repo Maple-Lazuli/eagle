@@ -39,7 +39,7 @@ def set_up():
                                 "key_id": crypto.key_id}, it_key)
 
     ssp_key = r.get("http://127.0.0.1:4520/key_id").json()['key_id']
-
+    print("Ssp Key", ssp_key)
     if position_lead:
         # res = r.post("http://127.0.0.1:4520/register", json=json.dumps({"section_id": section_id}))
         res = crypto.post("http://127.0.0.1:4520/register", {"section_id": section_id}, ssp_key)
