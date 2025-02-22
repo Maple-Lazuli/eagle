@@ -1,4 +1,5 @@
 import psycopg2
+from datetime import datetime
 
 DB_CONFIG = {
     "dbname": "mydb",
@@ -127,3 +128,29 @@ def get_employees(sect_id):
             temp[key] = val
         employee_dicts.append(temp)
     return employee_dicts
+
+
+def get_logs_by_employee(section_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""SELECT logs.*
+        FROM logs
+        JOIN employees ON logs.emp_id = employees.id
+        WHERE employees.section_id = %s""", (section_id,))
+    logs = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    log_dicts = []
+    keys = ["id", "scaled_timestamp", "ssp_id", "emp_id", "authorized"]
+    for log in logs:
+        temp_dict = dict()
+        for key, val in zip(keys, log):
+            if key == "scaled_timestamp":
+                temp_dict[key] = datetime.fromtimestamp(val)
+            else:
+                temp_dict[key] = val
+
+        log_dicts.append(temp_dict)
+    return log_dicts
+

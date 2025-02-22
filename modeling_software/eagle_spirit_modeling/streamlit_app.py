@@ -1,6 +1,7 @@
 import streamlit as st
 import network_plot as np
 from datetime import timedelta
+import plot_functions as pf
 import utilities as u
 
 if "department" not in st.session_state:
@@ -23,6 +24,22 @@ if "departments" not in st.session_state:
 
 if "metrics_ready" not in st.session_state:
     st.session_state.metrics_ready = None
+
+
+@st.cache_data
+def interactions_line_plot(logs):
+    return pf.get_employee_interactions_line_plot(logs)
+
+
+@st.cache_data
+def authorization_line_plot(logs):
+    return pf.get_employee_interactions_by_employee_by_authorization(logs)
+
+
+@st.cache_data
+def interactions_histogram(logs):
+    return pf.employee_hour_histogram(logs)
+
 
 # Select the department
 st.session_state.selected_department = st.selectbox(
@@ -83,7 +100,7 @@ if st.session_state.section is not None:
     team_lead = u.get_employee(st.session_state.section_details['lead_id'])
     st.markdown(f"**Team Lead**: {team_lead['first_name']} {team_lead['last_name']}")
     st.markdown(f"**Work Day(s)**: {u.get_workdays_str(st.session_state.section_details)}")
-    st.markdown(f"**Start Time**: {int(st.session_state.section_details['start_hour'])*100} ")
+    st.markdown(f"**Start Time**: {int(st.session_state.section_details['start_hour']) * 100} ")
 
     section_employees = u.get_employees(st.session_state.section)
 
@@ -95,4 +112,7 @@ if st.session_state.section is not None:
     st.session_state.metrics_ready = True
 
 if st.session_state.metrics_ready is not None:
-    print("Its metrics time")
+    logs = u.get_logs_by_employee(st.session_state.section)
+    st.plotly_chart(interactions_line_plot(logs))
+    st.plotly_chart(authorization_line_plot(logs))
+    st.plotly_chart(interactions_histogram(logs))
