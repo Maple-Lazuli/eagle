@@ -73,12 +73,11 @@ def main():
     user_dict = set_up()
     crypto = user_dict['crypto']
     while not u.kill_switch_active(crypto):
-        time.sleep(random.randint(3, 10))
+        time.sleep(random.randint(1, 30))
         current_time = u.get_current_sim_time(crypto)
         normal_hours = u.within_operating_hours(current_time, user_dict['start_hour'], user_dict['work_days'])
         if not normal_hours:
-            time.sleep(random.randint(20, 60))
-
+            time.sleep(random.randint(60*2, 60*5))
         if user_dict['insider']:
 
             # decide whether to go in after hours
