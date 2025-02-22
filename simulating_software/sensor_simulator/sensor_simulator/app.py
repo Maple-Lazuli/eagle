@@ -38,7 +38,7 @@ def register_insider():
     data = json.loads(request.json)
     sender_key = data["sender_key"]
     data = crypto.decrypt_message(data)
-    account = data['account']
+    account = data['account']['account']
     u.register_insider(account)
 
     return Response(crypto.create_payload({"Response": "Okay"}, sender_key), status=200, mimetype='application/json')
