@@ -3,7 +3,7 @@ import networkx as nx
 
 
 def create_network(edges: list, label_team_only: bool = True, selected_member: str = None) -> tuple:
-    edges = [(e[0], e[1]) for e in edges]
+    edges = [(e['emp_id'], e['ssp_id']) for e in edges]
     graph = nx.Graph()
     graph.add_edges_from(edges)
     pos = nx.kamada_kawai_layout(graph, dim=3)

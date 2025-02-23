@@ -103,9 +103,8 @@ def employee_hour_histogram(logs):
 
     fig.update_layout(
         title="Histogram of Employee Hours",
-        xaxis_title="Value",
         yaxis_title="Count",
-        height=100 * len(emp_ids),
+        height=125 * len(emp_ids),
         showlegend=False)
 
     return fig
