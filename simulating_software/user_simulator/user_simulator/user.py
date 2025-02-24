@@ -79,11 +79,11 @@ def set_up():
 
 
 def step(user_dict, crypto):
-    time.sleep(random.randint(1, 30))
+    time.sleep(random.randint(1, 20))
     current_time = u.get_current_sim_time(crypto)
     normal_hours = u.within_operating_hours(current_time, user_dict['start_hour'], user_dict['work_days'])
     if not normal_hours:
-        time.sleep(random.randint(60 * 1, 60 * 5))
+        time.sleep(random.randint(30 * 1, 30 * 5))
     if user_dict['insider']:
 
         # decide whether to go in after hours
@@ -91,12 +91,12 @@ def step(user_dict, crypto):
             if not random.randint(0, 20) == 3:
                 return
         # decide whether random ssp or typical ssp
-        if random.randint(0, 30) == 5:
+        if random.randint(0, 20) == 5:
             rand_ssp = random.choice(u.get_registered_ssps(crypto))
             u.send_request(user_dict['employee_num'], rand_ssp, crypto)
         else:
             # decide dept ssp or team ssp
-            if random.randint(0, 15) == 3:
+            if random.randint(0, 10) == 3:
                 div_ssp = random.choice(u.get_division_ssps(user_dict['division_id'], crypto))
                 u.send_request(user_dict['employee_num'], div_ssp, crypto)
 
@@ -106,11 +106,11 @@ def step(user_dict, crypto):
     else:
         # decide whether to go in after hours
         if not normal_hours:
-            if not random.randint(0, 25) == 3:
+            if not random.randint(0, 20) == 3:
                 return
 
         # decide dept ssp or team ssp
-        if random.randint(0, 30) == 3:
+        if random.randint(0, 25) == 3:
             dept_ssp = random.choice(u.get_division_ssps(user_dict['division_id'], crypto))
             u.send_request(user_dict['employee_num'], dept_ssp, crypto)
 
