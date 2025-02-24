@@ -35,7 +35,7 @@ if "end_date" not in st.session_state:
 def filter_logs():
     logs = st.session_state.logs
     start = datetime.datetime.combine(st.session_state.start_date, datetime.time(0, 0, 0)).timestamp()
-    end = datetime.datetime.combine(st.session_state.stop_date, datetime.time(0, 0, 0)).timestamp()
+    end = datetime.datetime.combine(st.session_state.stop_date, datetime.time(23, 59, 59)).timestamp()
 
     return [l for l in logs if start <= l['scaled_timestamp'].timestamp() <= end]
 
