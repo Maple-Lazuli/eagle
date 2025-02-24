@@ -35,4 +35,4 @@ RUN git clone --no-checkout https://github.com/apache/arrow.git /arrow \
 
 RUN uv sync
 
-CMD [ "uv", "run", "modeling_software/app.py"]
+CMD [ "uv", "run","streamlit", "run", "modeling_software/streamlit_app.py"]
