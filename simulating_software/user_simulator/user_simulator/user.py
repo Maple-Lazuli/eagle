@@ -79,11 +79,11 @@ def set_up():
 
 
 def step(user_dict, crypto):
-    time.sleep(random.randint(1, 20))
+    time.sleep(random.randint(60, 60*5))
     current_time = u.get_current_sim_time(crypto)
     normal_hours = u.within_operating_hours(current_time, user_dict['start_hour'], user_dict['work_days'])
     if not normal_hours:
-        time.sleep(random.randint(30 * 1, 30 * 5))
+        time.sleep(random.randint(60 * 1, 60 * 20))
     if user_dict['insider']:
 
         # decide whether to go in after hours
@@ -131,7 +131,7 @@ def main():
 
     error_count = 0
     while not u.kill_switch_active(crypto):
-        if error_count > 10:
+        if error_count > 100:
             break
         try:
             step(user_dict, crypto)
@@ -157,7 +157,7 @@ def multi_thread_users(num_users):
     threads = []
 
     for _ in range(num_users):
-        time.sleep(random.randint(1, 5))
+        time.sleep(random.randint(60, 60*30))
         thread = threading.Thread(target=main)
         thread.start()
         threads.append(thread)
