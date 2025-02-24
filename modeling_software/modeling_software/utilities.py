@@ -133,16 +133,18 @@ def get_employees(sect_id):
 def get_logs_by_employee(section_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""SELECT logs.*
+    cursor.execute("""SELECT logs.*, employees.*, ssps.name
         FROM logs
         JOIN employees ON logs.emp_id = employees.id
+        JOIN ssps ON logs.ssp_id = ssps.id
         WHERE employees.section_id = %s""", (section_id,))
     logs = cursor.fetchall()
     cursor.close()
     conn.close()
 
     log_dicts = []
-    keys = ["id", "scaled_timestamp", "ssp_id", "emp_id", "authorized"]
+    keys = ["id", "scaled_timestamp", "ssp_id", "emp_id", "authorized", "id", "first_name", "last_name", "section_id",
+            "ssp_name"]
     for log in logs:
         temp_dict = dict()
         for key, val in zip(keys, log):
@@ -150,7 +152,8 @@ def get_logs_by_employee(section_id):
                 temp_dict[key] = datetime.fromtimestamp(val)
             else:
                 temp_dict[key] = val
-
+        temp_dict['emp_id'] = f"{temp_dict['first_name']} {temp_dict['last_name']} ({temp_dict['emp_id']})"
+        temp_dict['ssp_id'] = f"{temp_dict['ssp_name']} ({temp_dict['ssp_id']})"
         log_dicts.append(temp_dict)
     return log_dicts
 

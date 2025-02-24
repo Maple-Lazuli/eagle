@@ -16,7 +16,7 @@ def get_employee_interactions_line_plot(logs):
             x=emp_data['scaled_timestamp'],
             y=emp_data['daily_interactions'],
             mode='lines+markers',
-            name=f'Employee {emp}'
+            name=f'{emp}'
         ))
 
     fig.update_layout(
@@ -43,7 +43,7 @@ def get_employee_interactions_by_employee_by_authorization(logs):
         cols=len(states),
         shared_xaxes=True,
         shared_yaxes=True,
-        subplot_titles=[f"Emp {emp_id} - Authorized={state}" for emp_id in emp_ids for state in states]
+        subplot_titles=[f"{emp_id} - Authorized={state}" for emp_id in emp_ids for state in states]
     )
 
     row = 1
@@ -56,7 +56,7 @@ def get_employee_interactions_by_employee_by_authorization(logs):
                 x=product_data['scaled_timestamp'],
                 y=product_data['daily_interactions'],
                 mode='lines+markers',
-                name=f'Employee {emp_id}(Authorized)' if state else f'Employee {emp_id}(Unauthorized)'
+                name=f'{emp_id} (Authorized)' if state else f'{emp_id} (Unauthorized)'
             )
 
             fig.add_trace(trace, row=row, col=col)
@@ -86,7 +86,7 @@ def employee_hour_histogram(logs):
         cols=1,
         shared_xaxes=True,
         shared_yaxes=True,
-        subplot_titles=[f"Emp {emp_id}" for emp_id in emp_ids])
+        subplot_titles=[emp_id for emp_id in emp_ids])
 
     row = 1
     col = 1

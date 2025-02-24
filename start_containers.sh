@@ -25,6 +25,9 @@ sudo docker run -d -p 4590:4590 --network host  lovelylazuli/ssp-manager-simulat
 sleep 5
 sudo docker run -d  -p 4520:4520 --network host lovelylazuli/sensor-simulator
 sleep 5
+sudo docker run -d  -p 8501:8501 --network host lovelylazuli/behavior-modeler
+sleep 5
+8501
 
 for ((i=1; i<=n; i++)); do
   sudo docker run -d  --network host  lovelylazuli/user-simulator

@@ -1,13 +1,19 @@
+import os
+
 from flask import Flask, request, Response
 import json
 import crypto_layer as cl
 import utilities as u
+import os
+import secrets
 
 app = Flask(__name__)
 
 # Initialize Database
 u.init_db()
 crypto = cl.CryptoLayer()
+if not os.path.exists(".data"):
+    os.mkdir(".data")
 
 
 @app.route('/key_id', methods=['GET'])
@@ -30,6 +36,29 @@ def get_accounts():
     conn.close()
 
     return Response(crypto.create_payload(accounts, sender_key), status=200, mimetype='application/json')
+
+
+@app.route('/it_error_logs', methods=["POST"])
+def record_errorss():
+    if not request.is_json:
+        return Response("Invalid Request", status=400, mimetype='application/json')
+
+    with open(f".data/{secrets.token_hex(32)}.json", 'w') as file_out:
+        json.dump(json.loads(request.json), file_out)
+
+    return Response("Error Logged", status=200, mimetype='application/json')
+
+
+@app.route('/it_error_logs', methods=['GET'])
+def get_errors():
+    records = []
+    for root, dirs, files in os.walk(".data"):
+        for file in files:
+            if str(file).find(".json"):
+                with open(os.path.join(root, file), "r") as file_in:
+                    records.append(json.load(file_in))
+
+    return Response(json.dumps(records), status=200, mimetype='application/json')
 
 
 @app.route('/register', methods=['POST'])

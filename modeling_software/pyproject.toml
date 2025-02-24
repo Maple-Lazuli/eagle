@@ -1,18 +1,14 @@
 [project]
-name = "eaglespiritmodeling"
+name = "modelingsoftware"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "cryptography>=44.0.1",
-    "flask>=3.1.0",
-    "matplotlib>=3.10.0",
     "networkx>=3.4.2",
-    "plotly>=5.24.1",
+    "plotly>=6.0.0",
     "psycopg2>=2.9.10",
     "pycryptodome>=3.21.0",
-    "requests>=2.32.3",
-    "scipy>=1.15.2",
-    "streamlit>=1.41.1",
+    "streamlit>=1.42.2",
 ]

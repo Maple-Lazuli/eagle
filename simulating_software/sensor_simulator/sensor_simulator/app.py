@@ -9,7 +9,7 @@ app = Flask(__name__)
 u.init_db()
 
 time_scale = 1.00000001
-# time_scale = 1.0000001
+#time_scale = 1.00001
 current = datetime.datetime.now()
 scaled_base = current.timestamp() * time_scale
 kill_switch_active = False
