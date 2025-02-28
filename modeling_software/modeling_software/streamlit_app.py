@@ -55,6 +55,14 @@ def interactions_histogram(logs):
     return pf.employee_hour_histogram(logs)
 
 
+@st.cache_data
+def get_table(threshold):
+    return u.hunt_insiders(threshold)
+
+
+with st.expander('Insider Tips'):
+    slider_value = st.slider('Set Threshold', 1.0, 3.0, 3.0, step=0.1)
+    st.table(get_table(slider_value))
 # Select the department
 st.session_state.selected_department = st.selectbox(
     "Select A department",
@@ -156,6 +164,5 @@ if (st.session_state.start_date is not None) and (st.session_state.stop_date is 
     st.write("Team Resource Usage")
     selected_employee = st.selectbox(
         "Select An Employee To Highlight",
-        [None] + list(set([l['emp_id'] for l in logs])))
+        [None] + sorted(list(set([l['emp_id'] for l in logs]))))
     st.plotly_chart(np.create_plotly_plot(logs, selected_member=selected_employee))
-

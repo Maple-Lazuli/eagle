@@ -1,5 +1,6 @@
 import psycopg2
 from datetime import datetime
+import pandas as pd
 
 DB_CONFIG = {
     "dbname": "mydb",
@@ -157,3 +158,83 @@ def get_logs_by_employee(section_id):
         log_dicts.append(temp_dict)
     return log_dicts
 
+
+def hunt_insiders(threshold):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(f"""WITH section_avg AS (
+        SELECT 
+            e.section_id, 
+            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY unique_ssp_count) AS median_logins,
+            STDDEV(unique_ssp_count) AS stddev_logins
+        FROM 
+            employees e
+        JOIN (
+            SELECT 
+                emp_id, 
+                COUNT(*) AS log_count,
+                COUNT(DISTINCT ssp_id) AS unique_ssp_count
+            FROM 
+                logs
+            GROUP BY 
+                emp_id
+        ) log_counts 
+        ON e.id = log_counts.emp_id
+        GROUP BY 
+            e.section_id
+    ),
+    employee_logins AS (
+        SELECT 
+            e.id, 
+            e.first_name,
+            e.last_name,
+            e.section_id, 
+            COUNT(l.id) AS log_count,
+            COUNT(DISTINCT l.ssp_id) AS unique_ssp_count
+        FROM 
+            employees e
+        LEFT JOIN logs l 
+            ON e.id = l.emp_id
+        GROUP BY 
+            e.id, e.section_id
+    )
+
+    SELECT 
+        el.id, 
+        el.first_name,
+        el.last_name,
+        sec.name,
+        div.name,
+        dept.name,
+        el.unique_ssp_count,
+        sa.median_logins,
+        el.unique_ssp_count - (sa.median_logins +  {threshold}* sa.stddev_logins)
+    FROM 
+        employee_logins el
+    JOIN 
+        section_avg sa
+        ON el.section_id = sa.section_id
+    JOIN 
+        sections sec
+        ON sa.section_id = sec.id
+    JOIN 
+        divisions div
+        ON sec.division_id = div.id
+    JOIN
+        departments dept
+        ON div.department_id = dept.id
+    WHERE 
+        el.unique_ssp_count > sa.median_logins +  {threshold}* sa.stddev_logins;""")
+    hits = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    columns = ['ID', 'first_name', 'last_name', 'Section', 'Division', 'Department', 'Resources', 'Median', 'Score']
+    mapped = []
+    for hit in hits:
+        temp = dict()
+        for key, value in zip(columns, hit):
+            temp[key] = value
+        mapped.append(temp
+                      )
+    return pd.DataFrame.from_dict(mapped).sort_values(['Score'], ascending=False).drop(['Resources', 'Median'], axis=1)

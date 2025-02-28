@@ -70,7 +70,12 @@ def create_plotly_plot(edges: list, selected_member: str = None, title: str = ""
         text=node_labels,
         textposition="top center",
         hovertext=hover_text,
-        hoverinfo='text'
+        hoverinfo='text',
+        textfont=dict(
+            family="Arial",
+            size=10,
+            color="rgba(100, 100, 100, 0.3)"  # Make the text color more translucent (0.5 opacity)
+    )
     ))
 
     fig.update_layout(
